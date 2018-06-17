@@ -1,14 +1,15 @@
 package com.example.robga.cryptocurrency.Network
 
+import com.example.robga.cryptocurrency.Network.ResponseModels.PairResponse
 import retrofit2.Call
 import retrofit2.http.GET
-
+import retrofit2.http.Path
 
 
 /**
  * Created by robga on 18-Jun-18.
  */
 interface ApiService {
-//    @GET("/answers?order=desc&sort=activity&site=stackoverflow")
-//    fun getAnswers(): Call<AllCoinListResponse>
+    @GET("/data/price?fsym=BTC&tsyms=USD")
+    fun getAnswers(): Call<PairResponse>
 }
