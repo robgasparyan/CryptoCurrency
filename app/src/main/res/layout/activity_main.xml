@@ -16,6 +16,14 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:src="@drawable/back_icon"
+            android:id="@+id/back_image_View"
+            android:visibility="gone"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:src="@drawable/app_icon" />
 
         <Space
@@ -45,4 +53,10 @@
         android:id="@+id/please_add_currency_title"
         android:textColor="@color/colorWhite"
         android:textSize="@dimen/_28sdp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_below="@+id/bar"
+        android:id="@+id/top_list_fragment_container"/>
 </RelativeLayout>

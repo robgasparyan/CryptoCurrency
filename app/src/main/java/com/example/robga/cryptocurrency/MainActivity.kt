@@ -33,11 +33,11 @@ import android.content.DialogInterface
 class MainActivity : AppCompatActivity() {
     private lateinit var currencyViewModel: CurrencyViewModel
     private lateinit var currencyRecyclerViewAdapter: CurrencyAdapter
-    private var context:Context?=null
+    private var context: Context? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        context=this
+        context = this
         val addCurrencyPair = add_currency_pair
         addCurrencyPair.setOnClickListener {
             showAlertDialog()
@@ -60,14 +60,20 @@ class MainActivity : AppCompatActivity() {
                 alert.show()
             }
         }
+        currencyRecyclerViewAdapter.onClicklistener = object : CurrencyAdapter.onClickListener {
+            override fun onClick(currencyEntity: CurrencyEntity) {
+                this@MainActivity.supportFragmentManager.beginTransaction()
+                        .add(R.id.top_list_fragment_container, TopListFragment())
+                        .commitAllowingStateLoss()
+            }
+        }
         currencyViewModel.getAllCurrency().observe(this, Observer {
             if (it != null) {
                 currencyRecyclerViewAdapter.update(it)
                 if (it.isNotEmpty()) {
                     please_add_currency_title.visibility = View.GONE
                     Utils.updateCurrentCurrencyList(it, currencyViewModel)
-                }
-                else{
+                } else {
                     please_add_currency_title.visibility = View.VISIBLE
                 }
             }

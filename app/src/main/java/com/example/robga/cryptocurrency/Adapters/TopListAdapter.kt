@@ -13,19 +13,8 @@ import kotlinx.android.synthetic.main.currency_item.view.*
 /**
  * Created by robga on 19-Jun-18.
  */
-class CurrencyAdapter : RecyclerView.Adapter<CurrencyAdapter.ViewHolder>() {
+class TopListAdapter: RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
     private var list: List<CurrencyEntity> = arrayListOf()
-
-    var onClicklistener: onClickListener? = null
-    var onLongClicklistener: onLongClickListener? = null
-
-    interface onClickListener {
-        fun onClick(currencyEntity: CurrencyEntity)
-    }
-
-    interface onLongClickListener {
-        fun onLongClick(currencyEntity: CurrencyEntity)
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.currency_item, parent, false))
@@ -44,13 +33,6 @@ class CurrencyAdapter : RecyclerView.Adapter<CurrencyAdapter.ViewHolder>() {
         holder.firstCurrency.text = list[position].currencyFirst
         holder.valueConvertCurrency.text = list[position].currencyConvertValue.toString()
         holder.secondCurrency.text = list[position].currencySecond
-        holder.currencyItemContainer.setOnLongClickListener {
-            onLongClicklistener?.onLongClick(list[position])
-            return@setOnLongClickListener true
-        }
-        holder.currencyItemContainer.setOnClickListener {
-            onClicklistener?.onClick(list[position])
-        }
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
