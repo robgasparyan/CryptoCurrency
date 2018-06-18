@@ -33,7 +33,7 @@ class CurrencyApplication : Application() {
                 }
             }
         })
-
+       
     }
 
     companion object {

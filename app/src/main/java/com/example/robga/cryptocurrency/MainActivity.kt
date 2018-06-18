@@ -2,6 +2,7 @@ package com.example.robga.cryptocurrency
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -16,6 +17,7 @@ import com.example.robga.cryptocurrency.Adapters.CurrencyAdapter
 import com.example.robga.cryptocurrency.Database.DBService
 import com.example.robga.cryptocurrency.Database.Entity.CurrencyEntity
 import com.example.robga.cryptocurrency.Database.ViewModel.CurrencyViewModel
+import com.example.robga.cryptocurrency.Utils.Utils
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.custom_alert_dialog_layout.view.*
@@ -25,27 +27,48 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import android.content.DialogInterface
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var currencyViewModel: CurrencyViewModel
     private lateinit var currencyRecyclerViewAdapter: CurrencyAdapter
+    private var context:Context?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        context=this
         val addCurrencyPair = add_currency_pair
         addCurrencyPair.setOnClickListener {
             showAlertDialog()
         }
         currencyViewModel = ViewModelProviders.of(this).get(CurrencyViewModel::class.java)
-        currencyRecyclerViewAdapter= CurrencyAdapter()
-        val currencyRecyclerView=currency_RecyclerView
-        currencyRecyclerView.layoutManager=LinearLayoutManager(this)
-        currencyRecyclerView.adapter=currencyRecyclerViewAdapter
+        currencyRecyclerViewAdapter = CurrencyAdapter()
+        val currencyRecyclerView = currency_RecyclerView
+        currencyRecyclerView.layoutManager = LinearLayoutManager(this)
+        currencyRecyclerView.adapter = currencyRecyclerViewAdapter
+        currencyRecyclerViewAdapter.onLongClicklistener = object : CurrencyAdapter.onLongClickListener {
+            override fun onLongClick(currencyEntity: CurrencyEntity) {
+                val builder = AlertDialog.Builder(context as MainActivity)
+                builder.setMessage(getString(R.string.delete_pair))
+                        .setCancelable(true)
+                        .setNegativeButton(getString(R.string.cancel)) { dialog, which -> }
+                        .setPositiveButton(getString(R.string.delete)) { dialog, id ->
+                            currencyViewModel.deleteCurrency(currencyEntity)
+                        }
+                val alert = builder.create()
+                alert.show()
+            }
+        }
         currencyViewModel.getAllCurrency().observe(this, Observer {
-            if(it!=null){
+            if (it != null) {
                 currencyRecyclerViewAdapter.update(it)
-                if(it.isNotEmpty()){
-                    please_add_currency_title.visibility= View.GONE
+                if (it.isNotEmpty()) {
+                    please_add_currency_title.visibility = View.GONE
+                    Utils.updateCurrentCurrencyList(it, currencyViewModel)
+                }
+                else{
+                    please_add_currency_title.visibility = View.VISIBLE
                 }
             }
         })

@@ -21,4 +21,10 @@ class CurrencyViewModel : AndroidViewModel {
     fun insertCurrency(currencyEntity: CurrencyEntity) {
         appDb.daoCart().insertCurrency(currencyEntity)
     }
+    fun updateCurrency(currencyEntity: CurrencyEntity) {
+        appDb.daoCart().updateCurrency(currencyEntity)
+    }
+    fun deleteCurrency(currencyEntity: CurrencyEntity) {
+        appDb.daoCart().deleteCurrency(currencyEntity)
+    }
 }
