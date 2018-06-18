@@ -3,4 +3,7 @@
     <string name="to">to</string>
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
+    <string name="select_crypto">Please Select Crypto Currency</string>
+    <string name="selec_currency">Please Select Currency</string>
+    <string name="please_add_your_currency_pair">Please Add Your Currency Pair</string>
 </resources>
