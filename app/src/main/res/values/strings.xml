@@ -5,5 +5,6 @@
     <string name="cancel">Cancel</string>
     <string name="select_crypto">Please Select Crypto Currency</string>
     <string name="selec_currency">Please Select Currency</string>
-    <string name="please_add_your_currency_pair">Please Add Your Currency Pair</string>
+    <string name="please_add_your_currency_pair">Add Your Currency Pair</string>
+    <string name="cant_find_pair">Can`t find Pair</string>
 </resources>

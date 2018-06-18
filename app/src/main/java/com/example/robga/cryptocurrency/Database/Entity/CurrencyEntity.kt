@@ -10,13 +10,13 @@ import android.arch.persistence.room.PrimaryKey
 @Entity(tableName = "currency_table")
 data class CurrencyEntity(
         @ColumnInfo(name = "currency_first")
-        var productName: String,
+        var currencyFirst: String,
         @ColumnInfo(name = "currency_second")
-        var productImage: String,
+        var currencySecond: String,
         @ColumnInfo(name = "currency_converted_value")
-        var productCoast: Double) {
+        var currencyConvertValue: Double) {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "currency_id")
-    var productId: Int = 0
+    var currencyId: Int = 0
 
 }
