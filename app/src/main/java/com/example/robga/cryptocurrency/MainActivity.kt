@@ -1,6 +1,5 @@
 package com.example.robga.cryptocurrency
 
-import android.Manifest
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
@@ -8,30 +7,19 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import com.example.robga.cryptocurrency.Adapters.CurrencyAdapter
-import com.example.robga.cryptocurrency.Database.DBService
 import com.example.robga.cryptocurrency.Database.Entity.CurrencyEntity
 import com.example.robga.cryptocurrency.Database.ViewModel.CurrencyViewModel
 import com.example.robga.cryptocurrency.Utils.Utils
-import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.custom_alert_dialog_layout.view.*
 import okhttp3.ResponseBody
-import org.json.JSONException
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import android.content.DialogInterface
-import android.content.pm.PackageManager
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
 import android.text.InputFilter
 import android.widget.ImageView
 import java.lang.Exception
@@ -41,13 +29,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var currencyViewModel: CurrencyViewModel
     private lateinit var currencyRecyclerViewAdapter: CurrencyAdapter
     private var context: Context? = null
-    private val INTERNET_PERMISSION_FLAG = 1
+
     lateinit var backImageView: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        permission()
         backImageView = back_image_View
         context = this
         val addCurrencyPair = add_currency_pair
@@ -105,8 +92,6 @@ class MainActivity : AppCompatActivity() {
         dialogBuilder.setView(dialogView)
         dialogBuilder.setTitle("Select")
         dialogBuilder.setCancelable(true)
-
-        // text all caps
         val inputFilter = arrayOf<InputFilter>(InputFilter.AllCaps())
 
         val autoCompleteTextView = dialogView.autoCompleteTextView
@@ -118,6 +103,11 @@ class MainActivity : AppCompatActivity() {
         secondCurrency.filters = inputFilter
 
         val addCurrencyPairTextView = dialogView.add_currency_pair_TextView
+        val cancelTextView = dialogView.cancelTextView
+        val alertDialog = dialogBuilder.create()
+        cancelTextView.setOnClickListener {
+            alertDialog.dismiss()
+        }
         addCurrencyPairTextView.setOnClickListener {
             val text1 = autoCompleteTextView.text.toString()
             val text2 = secondCurrency.text.toString()
@@ -138,28 +128,16 @@ class MainActivity : AppCompatActivity() {
                         val str = response?.body()?.string()?.split(":")!![1]
                         val a = str.substring(0, str.length - 1).toDouble()
                         currencyViewModel.insertCurrency(CurrencyEntity(text1, text2, a))
+                        alertDialog.dismiss()
                     } catch (e: Exception) {
                         Toast.makeText(context, getString(R.string.cant_find_pair), Toast.LENGTH_SHORT).show()
                     }
                 }
             })
         }
-        val alertDialog = dialogBuilder.create()
+
+
         alertDialog.show()
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            INTERNET_PERMISSION_FLAG -> {
-                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                } else {
-                    this.finish()
-                }
-                return
-            }
-
-        }
     }
 
     override fun onBackPressed() {
@@ -168,18 +146,6 @@ class MainActivity : AppCompatActivity() {
             backImageView.visibility = View.GONE
         } else {
             super.onBackPressed()
-        }
-    }
-
-    private fun permission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                            Manifest.permission.INTERNET)) {
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        arrayOf(Manifest.permission.INTERNET),
-                        INTERNET_PERMISSION_FLAG)
-            }
         }
     }
 }
