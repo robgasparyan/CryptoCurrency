@@ -11,6 +11,7 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.Exception
 
 /**
  * Created by robga on 19-Jun-18.
@@ -31,7 +32,7 @@ class Utils {
                                 currencyEntity.currencyId=currencyItem.currencyId
                                 viewModel.updateCurrency(currencyItem)
                             }
-                        } catch (e: JSONException) {
+                        } catch (e: Exception) {
 
                         }
                     }

@@ -1,44 +1,45 @@
 package com.example.robga.cryptocurrency.Adapters
 
+import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
-import com.example.robga.cryptocurrency.Database.Entity.CurrencyEntity
+import com.example.robga.cryptocurrency.Network.ResponseModels.TopListResponse
 import com.example.robga.cryptocurrency.R
-import kotlinx.android.synthetic.main.currency_item.view.*
+import kotlinx.android.synthetic.main.top_list_item.view.*
 
 /**
  * Created by robga on 19-Jun-18.
  */
-class TopListAdapter: RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
-    private var list: List<CurrencyEntity> = arrayListOf()
-
+class TopListAdapter : RecyclerView.Adapter<TopListAdapter.ViewHolder>() {
+    private var response: TopListResponse? = null
+    private var context: Context? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.currency_item, parent, false))
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.top_list_item, parent, false)
+        if (context == null) context = view.context
+        return ViewHolder(view)
     }
 
-    fun update(list: List<CurrencyEntity>) {
-        this.list = list
+    fun update(response: TopListResponse?) {
+        this.response = response
         notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {
-        return list.size
+        if (response == null || response?.data == null) return 0 else return response?.data?.size!!
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.firstCurrency.text = list[position].currencyFirst
-        holder.valueConvertCurrency.text = list[position].currencyConvertValue.toString()
-        holder.secondCurrency.text = list[position].currencySecond
+        holder.exchange.text = response?.data!![position].exchange
+        holder.volume24.text = response?.data!![position].volume24h.toString()
+        holder.volume24to.text = response?.data!![position].volume24hTo.toString()
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val currencyItemContainer: LinearLayout = itemView.currency_item_container
-        val firstCurrency: TextView = itemView.first_currency
-        val valueConvertCurrency: TextView = itemView.convert_value
-        val secondCurrency: TextView = itemView.second_currency
+        val exchange: TextView = itemView.exchange
+        val volume24: TextView = itemView.volume24h
+        val volume24to: TextView = itemView.volume24to
     }
 }

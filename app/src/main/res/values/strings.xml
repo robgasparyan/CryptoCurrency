@@ -9,4 +9,7 @@
     <string name="cant_find_pair">Can`t find Pair</string>
     <string name="delete">Delete</string>
     <string name="delete_pair">Are you sure, you want delete this pair?</string>
+    <string name="exchange">Exchange</string>
+    <string name="volume24h">Volume24h</string>
+    <string name="volume24to">Volume24hTo</string>
 </resources>

@@ -18,8 +18,7 @@ abstract class DBService :RoomDatabase (){
          fun getDataBase(context: Context): DBService {
             if (INSTANCE == null) {
                 INSTANCE = Room.databaseBuilder(context.applicationContext, DBService::class.java, AppConstants.dbName)
-                        .fallbackToDestructiveMigration().
-                                allowMainThreadQueries().build()
+                       .allowMainThreadQueries().build()
             }
             return INSTANCE as DBService
         }

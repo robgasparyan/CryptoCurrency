@@ -6,4 +6,5 @@
     <color name="colorWhite">#afafaf</color>
     <color name="bar_color">#181818</color>
     <color name="background_color">#3b3b3b</color>
+    <color name="top_list_background_color">#494949</color>
 </resources>

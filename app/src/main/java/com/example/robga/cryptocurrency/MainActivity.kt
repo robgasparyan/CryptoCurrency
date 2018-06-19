@@ -1,5 +1,6 @@
 package com.example.robga.cryptocurrency
 
+import android.Manifest
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
@@ -28,15 +29,26 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.content.DialogInterface
+import android.content.pm.PackageManager
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
+import android.text.InputFilter
+import android.widget.ImageView
+import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var currencyViewModel: CurrencyViewModel
     private lateinit var currencyRecyclerViewAdapter: CurrencyAdapter
     private var context: Context? = null
+    private val INTERNET_PERMISSION_FLAG = 1
+    lateinit var backImageView: ImageView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        permission()
+        backImageView = back_image_View
         context = this
         val addCurrencyPair = add_currency_pair
         addCurrencyPair.setOnClickListener {
@@ -62,8 +74,14 @@ class MainActivity : AppCompatActivity() {
         }
         currencyRecyclerViewAdapter.onClicklistener = object : CurrencyAdapter.onClickListener {
             override fun onClick(currencyEntity: CurrencyEntity) {
+                val topListFragment = TopListFragment()
+                topListFragment.currencyEntity = currencyEntity
+                backImageView.visibility = View.VISIBLE
+                backImageView.setOnClickListener {
+                    this@MainActivity.onBackPressed()
+                }
                 this@MainActivity.supportFragmentManager.beginTransaction()
-                        .add(R.id.top_list_fragment_container, TopListFragment())
+                        .add(R.id.top_list_fragment_container, topListFragment).addToBackStack(null)
                         .commitAllowingStateLoss()
             }
         }
@@ -87,9 +105,18 @@ class MainActivity : AppCompatActivity() {
         dialogBuilder.setView(dialogView)
         dialogBuilder.setTitle("Select")
         dialogBuilder.setCancelable(true)
+
+        // text all caps
+        val inputFilter = arrayOf<InputFilter>(InputFilter.AllCaps())
+
         val autoCompleteTextView = dialogView.autoCompleteTextView
         autoCompleteTextView.setAdapter(ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, CurrencyApplication.instance.coins))
+        autoCompleteTextView.filters = inputFilter
+
         val secondCurrency = dialogView.secondCurrency
+        secondCurrency.setAdapter(ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, CurrencyApplication.instance.fiatCurrency))
+        secondCurrency.filters = inputFilter
+
         val addCurrencyPairTextView = dialogView.add_currency_pair_TextView
         addCurrencyPairTextView.setOnClickListener {
             val text1 = autoCompleteTextView.text.toString()
@@ -108,9 +135,10 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onResponse(call: Call<ResponseBody?>?, response: Response<ResponseBody?>?) {
                     try {
-                        val a: Double = JSONObject(response?.body()?.string()).get(text2) as Double
+                        val str = response?.body()?.string()?.split(":")!![1]
+                        val a = str.substring(0, str.length - 1).toDouble()
                         currencyViewModel.insertCurrency(CurrencyEntity(text1, text2, a))
-                    } catch (e: JSONException) {
+                    } catch (e: Exception) {
                         Toast.makeText(context, getString(R.string.cant_find_pair), Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -118,5 +146,40 @@ class MainActivity : AppCompatActivity() {
         }
         val alertDialog = dialogBuilder.create()
         alertDialog.show()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            INTERNET_PERMISSION_FLAG -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                } else {
+                    this.finish()
+                }
+                return
+            }
+
+        }
+    }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStack()
+            backImageView.visibility = View.GONE
+        } else {
+            super.onBackPressed()
+        }
+    }
+
+    private fun permission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                            Manifest.permission.INTERNET)) {
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        arrayOf(Manifest.permission.INTERNET),
+                        INTERNET_PERMISSION_FLAG)
+            }
+        }
     }
 }

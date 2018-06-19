@@ -3,6 +3,8 @@ package com.example.robga.cryptocurrency
 import android.app.Application
 import com.example.robga.cryptocurrency.Network.ApiService
 import com.example.robga.cryptocurrency.Network.ResponseModels.AllCoinsResponse
+import okhttp3.ResponseBody
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -17,6 +19,7 @@ class CurrencyApplication : Application() {
     private lateinit var retrofit: Retrofit
 
     var coins = arrayListOf<String>()
+    var fiatCurrency = arrayListOf<String>()
 
     override fun onCreate() {
         super.onCreate()
@@ -33,7 +36,18 @@ class CurrencyApplication : Application() {
                 }
             }
         })
-       
+
+        CurrencyApplication.instance.getNetworkService().getFiatCurency("https://openexchangerates.org/api/currencies.json").enqueue(object: Callback<ResponseBody?> {
+            override fun onFailure(call: Call<ResponseBody?>?, t: Throwable?) {
+            }
+
+            override fun onResponse(call: Call<ResponseBody?>?, response: Response<ResponseBody?>?) {
+                JSONObject(response?.body()?.string()).keys().forEach {
+                    fiatCurrency.add(it)
+                }
+            }
+        })
+
     }
 
     companion object {
