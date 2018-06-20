@@ -11,17 +11,18 @@ import com.example.robga.cryptocurrency.Database.Entity.CurrencyEntity
 /**
  * Created by robga on 18-Jun-18.
  */
-@Database(entities = [(CurrencyEntity::class)],version = AppConstants.dbVersion,exportSchema = false)
-abstract class DBService :RoomDatabase (){
-     companion object {
+@Database(entities = [(CurrencyEntity::class)], version = AppConstants.dbVersion, exportSchema = false)
+abstract class DBService : RoomDatabase() {
+    companion object {
         private var INSTANCE: DBService? = null
-         fun getDataBase(context: Context): DBService {
+        fun getDataBase(context: Context): DBService {
             if (INSTANCE == null) {
                 INSTANCE = Room.databaseBuilder(context.applicationContext, DBService::class.java, AppConstants.dbName)
-                       .allowMainThreadQueries().build()
+                        .build()
             }
             return INSTANCE as DBService
         }
     }
+
     abstract fun daoCart(): CurrencyDao
 }

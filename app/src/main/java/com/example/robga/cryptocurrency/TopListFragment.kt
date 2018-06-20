@@ -3,18 +3,14 @@ package com.example.robga.cryptocurrency
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.example.robga.cryptocurrency.Adapters.TopListAdapter
 import com.example.robga.cryptocurrency.Database.Entity.CurrencyEntity
 import com.example.robga.cryptocurrency.Network.ResponseModels.TopListResponse
+import kotlinx.android.synthetic.main.fragment_layout.*
 import kotlinx.android.synthetic.main.fragment_layout.view.*
-import okhttp3.ResponseBody
-import org.json.JSONException
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -34,16 +30,17 @@ class TopListFragment : Fragment() {
 
         if (currencyEntity == null) {
             activity?.onBackPressed()
-        }
-        else{
+        } else {
             CurrencyApplication.instance.getNetworkService().getTopListForItem(currencyEntity!!.currencyFirst, currencyEntity!!.currencySecond).enqueue(object : Callback<TopListResponse?> {
                 override fun onFailure(call: Call<TopListResponse?>?, t: Throwable?) {
                 }
 
                 override fun onResponse(call: Call<TopListResponse?>?, response: Response<TopListResponse?>?) {
-                 if(response?.body() != null){
-                     topListAdapter.update(response.body())
-                 }
+                    if (response?.body() != null) {
+                        topListAdapter.update(response.body())
+
+                        does_not_have_top_list.visibility = if (!response.body()?.data!!.isEmpty()) View.GONE else View.VISIBLE
+                    }
                 }
             })
         }

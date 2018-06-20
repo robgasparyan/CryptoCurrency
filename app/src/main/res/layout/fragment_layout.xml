@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@color/top_list_background_color"
-    android:id="@+id/topList_recycler_view"
-    android:layout_height="match_parent"/>
+    android:layout_height="match_parent"
+    android:background="@color/top_list_background_color">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/does_have_top_list"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textColor="@color/colorWhite"
+        android:id="@+id/does_not_have_top_list"
+        android:textSize="@dimen/_22sdp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/topList_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</RelativeLayout>

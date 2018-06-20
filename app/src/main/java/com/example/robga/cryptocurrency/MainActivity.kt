@@ -29,14 +29,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var currencyViewModel: CurrencyViewModel
     private lateinit var currencyRecyclerViewAdapter: CurrencyAdapter
     private var context: Context? = null
-
+    private lateinit var list: List<CurrencyEntity>
     lateinit var backImageView: ImageView
-
+    private var isNeedUpdate = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         backImageView = back_image_View
         context = this
+        isNeedUpdate = true
         val addCurrencyPair = add_currency_pair
         addCurrencyPair.setOnClickListener {
             showAlertDialog()
@@ -75,12 +76,17 @@ class MainActivity : AppCompatActivity() {
         currencyViewModel.getAllCurrency().observe(this, Observer {
             if (it != null) {
                 currencyRecyclerViewAdapter.update(it)
+                list = it
                 if (it.isNotEmpty()) {
                     please_add_currency_title.visibility = View.GONE
-                    Utils.updateCurrentCurrencyList(it, currencyViewModel)
                 } else {
                     please_add_currency_title.visibility = View.VISIBLE
                 }
+                if (isNeedUpdate) {
+                    Utils.updateCurrentCurrencyList(list, currencyViewModel)
+                    isNeedUpdate = false
+                }
+
             }
         })
     }
@@ -118,6 +124,12 @@ class MainActivity : AppCompatActivity() {
             } else if (text2.isEmpty()) {
                 Toast.makeText(context, getString(R.string.selec_currency), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
+            }
+            for (item in list) {
+                if (item.currencyFirst == text1 && item.currencySecond == text2) {
+                    Toast.makeText(context, getString(R.string.duplicate_pair), Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
             }
             CurrencyApplication.instance.getNetworkService().getAnswers(text1, text2).enqueue(object : Callback<ResponseBody?> {
                 override fun onFailure(call: Call<ResponseBody?>?, t: Throwable?) {
